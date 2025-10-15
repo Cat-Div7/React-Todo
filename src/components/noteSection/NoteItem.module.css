@@ -1,0 +1,47 @@
+.noteMain {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.checkbox {
+  accent-color: var(--primary-color);
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+  &:checked + .label {
+    text-decoration: line-through;
+    opacity: 0.7;
+  }
+}
+
+
+
+.label {
+  cursor: pointer;
+  font-size: 0.95rem;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.editIcon,
+.deleteIcon {
+  cursor: pointer;
+  transition: transform 0.2s, color 0.2s;
+}
+
+.editIcon:hover {
+  color: var(--primary-color);
+  transform: scale(1.1);
+}
+
+.deleteIcon:hover {
+  color: var(--danger-color);
+  transform: scale(1.1);
+}

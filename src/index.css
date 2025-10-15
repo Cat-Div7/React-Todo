@@ -1,0 +1,62 @@
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  --primary-color: #6c63ff;
+  --secondry-color: #ffffff;
+  --background-color: #ffffff;
+  --text-color: #252525;
+  --muted-color: #c3c1e5;
+  --border-color: #6c63ff;
+  --border-focus: #6c63ff40;
+  --danger-color: #ff4d4d;
+
+  --border-smooth: 8px;
+}
+
+[data-theme="dark"] {
+  --primary-color: #6c63ff;
+  --background-color: #252525;
+  --text-color: #ffffff;
+  --muted-color: #666666;
+  --border-color: rgba(255, 255, 255, 0.2);
+  --danger-color: #ff6b6b;
+  --border-focus: #ffffff;
+}
+
+body {
+  font-family: "Kanit", sans-serif;
+  min-height: 100vh;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+h1 {
+  font-size: 2em;
+  text-align: center;
+  line-height: 1.1;
+  font-weight: 500;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: var(--primary-color);
+  color: var(--secondry-color);
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+
+button:hover {
+  border-color: var(--primary-color);
+}
+
+button:focus,
+button:focus-visible {
+  outline: none;
+}

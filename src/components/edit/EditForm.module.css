@@ -1,0 +1,72 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  background-color: var(--background-color);
+  border-radius: var(--border-smooth);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--white-color);
+}
+
+.input {
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-smooth);
+  outline: none;
+  background-color: var(--background-color);
+  color: var(--text-primary);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.input:focus {
+  box-shadow: 0 0 6px var(--border-focus);
+}
+
+.input.error {
+  color: var(--danger-color);
+  border-color: var(--danger-color);
+  &:focus {
+    box-shadow: 0 0 6px var(--danger-color);
+  }
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: var(--border-smooth);
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: 0.3s ease;
+}
+
+.btn-cancel {
+  background-color: transparent;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+  &:hover {
+    color: var(--white-color);
+    background-color: var(--primary-color);
+  }
+}
+
+.btn-save {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}

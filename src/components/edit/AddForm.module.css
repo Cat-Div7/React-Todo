@@ -1,0 +1,102 @@
+.form {
+  background: var(--background-color);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  font-family: system-ui, sans-serif;
+}
+
+.form .title {
+  display: block;
+  text-transform: uppercase;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text-color);
+  letter-spacing: 1px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 6px;
+  width: 100%;
+}
+
+.form .input {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 8px 14px;
+  border-radius: var(--border-smooth);
+  border: 1px solid var(--border-color);
+  font-size: 0.95rem;
+  outline: none;
+  color: var(--text-color);
+  background: var(--background-color);
+  transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+  box-sizing: border-box;
+}
+.form .input.error {
+  color: var(--danger-color);
+  border-color: var(--danger-color);
+  &:focus {
+    box-shadow: 0 0 6px var(--danger-color);
+  }
+}
+.form .input::placeholder {
+  color: var(--muted-color, rgba(0, 0, 0, 0.5));
+}
+
+.form .input:focus {
+  box-shadow: 0 0 6px var(--border-focus);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.btn {
+  flex: 1;
+  padding: 10px 0;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+}
+
+.btn-cancel {
+  background: transparent;
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+  transition: all 0.3s ease;
+  &:hover {
+    color: var(--secondry-color);
+    background-color: var(--primary-color);
+  }
+}
+
+.btn-apply {
+  background: var(--primary-color);
+  color: var(--secondry-color);
+  box-shadow: 0 4px 10px rgba(108, 99, 255, 0.25);
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+@media (min-width: 768px) {
+  .form {
+    min-width: 400px;
+  }
+}
