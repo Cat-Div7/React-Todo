@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "./utils/icons";
 import { EditForm, AddForm } from "./components/edit";
 import { Tools } from "./components/common";
-import { NoteList } from "./components/noteSection/NoteList";
+import { NoteList, Stats } from "./components/noteSection";
 import ThemeProvider from "./ThemeContext";
 import { useLocalStorage } from "./hooks/useLocalStorage";
 
@@ -33,22 +33,14 @@ const modalStyles = {
 
 // Main App Component
 function App() {
-  const INITIAL_ID = () => {
-    const savedRecords =
-      JSON.parse(localStorage.getItem(STORAGE_KEY_TODOS)) || [];
-    if (savedRecords.length === 0) return 1;
-    const maxId = savedRecords.reduce(
-      (max, rec) => (rec.id > max ? rec.id : max),
-      0
-    );
-    return maxId + 1;
-  };
-
+  // Custom Hook
   const {
     value: noteRecords,
     setValue: setNoteRecords,
     isLoaded,
   } = useLocalStorage(STORAGE_KEY_TODOS, []);
+
+  // Hooks
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpen2, setIsModalOpen2] = useState(false);
   const [filterValue, setFilterValue] = useState("All");
@@ -60,6 +52,8 @@ function App() {
     noteRecords.length === 0
       ? 1
       : Math.max(...noteRecords.map((rec) => rec.id)) + 1;
+
+  // ==========================
 
   // Handlers For Modal
   const handleOpenModal = () => setIsModalOpen(true);
@@ -88,6 +82,8 @@ function App() {
     setNoteRecords((prev) => prev.filter((rec) => rec.id !== id));
   };
 
+  // ==========================
+
   // Filter and Search Handlers
   const selectFilterHandler = (value) => setFilterValue(value);
 
@@ -98,7 +94,7 @@ function App() {
 
   const filteredNotes = noteRecords?.filter((note) => {
     // Select Box Filter
-    const matchesFilter =
+    const matchesSelect =
       filterValue === "All"
         ? true
         : filterValue === "Completed"
@@ -109,8 +105,10 @@ function App() {
       .toLowerCase()
       .includes(searchFilter.toLowerCase());
     // Returns Note that Achives Both
-    return matchesFilter && matchesSearch;
+    return matchesSelect && matchesSearch;
   });
+
+  // ==========================
 
   // Edit Modal Handlers
   const handleOpenModal2 = (note) => {
@@ -148,6 +146,9 @@ function App() {
           selectFilter={selectFilterHandler}
           searchFilter={searchHandler}
         ></Tools>
+
+        {/* Stats Component */}
+        <Stats records={noteRecords}></Stats>
 
         {/* Note List Section */}
         <NoteList
