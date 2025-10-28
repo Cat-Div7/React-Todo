@@ -44,4 +44,4 @@ function EditForm(props) {
   );
 }
 
-export default EditForm;
+export { EditForm };

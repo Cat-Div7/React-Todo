@@ -1,26 +1,27 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrash } from "../../utils/icons";
+import { memo, useEffect, useState } from "react";
 import styles from "./NoteItem.module.css";
-import { useState } from "react";
-import Modal from "react-modal";
 
-function NoteItem(props) {
+function NoteItemBase(props) {
   const { content, id, completed, onUpdate, onDelete, onEdit } = props;
   const [isChecked, setIsChecked] = useState(completed);
 
-  const checkHandler = (e) => {
-    setIsChecked(e.target.checked);
-    onUpdate(id, e.target.checked);
-  };
+  // Sync local state with props
+  useEffect(() => {
+    setIsChecked(completed);
+  }, [completed]);
 
-  const deleteHandler = () => onDelete(id);
-  const editHandler = () => {
-    onEdit({ id, content });
+  const checkHandler = (e) => {
+    const checked = e.target.checked;
+    setIsChecked(checked);
+    onUpdate(id, checked);
   };
 
   return (
     <>
       <div className={styles.noteMain}>
+        {/* Note Checkbox And Content */}
         <input
           type="checkbox"
           id={`note-${id}`}
@@ -33,20 +34,28 @@ function NoteItem(props) {
         </label>
       </div>
 
+      {/* Action Icons */}
       <div className={styles.actions}>
         <FontAwesomeIcon
           icon={faEdit}
           className={styles.editIcon}
-          onClick={editHandler}
+          onClick={() => onEdit({ id, content })}
         />
         <FontAwesomeIcon
           icon={faTrash}
           className={styles.deleteIcon}
-          onClick={deleteHandler}
+          onClick={() => onDelete(id)}
         />
       </div>
     </>
   );
 }
 
-export default NoteItem;
+// Memoizing Note
+const NoteItem = memo(
+  NoteItemBase,
+  (prev, next) =>
+    prev.content === next.content && prev.completed === next.completed
+);
+
+export { NoteItem };

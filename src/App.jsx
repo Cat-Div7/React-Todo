@@ -1,24 +1,38 @@
 import { useState } from "react";
-import AddForm from "./components/edit/AddForm";
 import Modal from "react-modal";
 import styles from "./App.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "./utils/icons";
-import Tools from "./components/common/Tools";
-import NoteList from "./components/noteSection/NoteList";
-import EditForm from "./components/edit/EditForm";
+import { EditForm, AddForm } from "./components/edit";
+import { Tools } from "./components/common";
+import { NoteList } from "./components/noteSection/NoteList";
+import ThemeProvider from "./ThemeContext";
+import { useLocalStorage } from "./hooks/useLocalStorage";
 
 const STORAGE_KEY_TODOS = "todoRecords"; // LocalStorage
-const INITIAL_VALUES = [
-  { id: 1, content: "NOTE #1", completed: true },
-  { id: 2, content: "NOTE #2", completed: false },
-  { id: 3, content: "NOTE #3", completed: true },
-];
 
+const modalStyles = {
+  content: {
+    top: "30%",
+    left: "50%",
+    right: "auto",
+    bottom: "auto",
+    border: "1px solid var(--border-color)",
+    marginRight: "-50%",
+    transform: "translate(-50%, -30%)",
+    padding: "0px",
+    borderRadius: "var(--border-smooth)",
+    backgroundColor: "transparent",
+    minWidth: "300px",
+    maxWidth: "500px",
+  },
+  overlay: {
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+};
+
+// Main App Component
 function App() {
-  const savedRecords =
-    JSON.parse(localStorage.getItem(STORAGE_KEY_TODOS)) || INITIAL_VALUES;
-
   const INITIAL_ID = () => {
     const savedRecords =
       JSON.parse(localStorage.getItem(STORAGE_KEY_TODOS)) || [];
@@ -30,48 +44,36 @@ function App() {
     return maxId + 1;
   };
 
-  const [noteRecords, setNoteRecords] = useState(savedRecords);
+  const {
+    value: noteRecords,
+    setValue: setNoteRecords,
+    isLoaded,
+  } = useLocalStorage(STORAGE_KEY_TODOS, []);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpen2, setIsModalOpen2] = useState(false);
-  const [currentID, setCurrentID] = useState(INITIAL_ID);
   const [filterValue, setFilterValue] = useState("All");
   const [searchFilter, setSearchFilter] = useState("");
   const [editValue, setEditValue] = useState("");
   const [storedId, setStoredId] = useState(0);
 
-  const modalStyles = {
-    content: {
-      top: "30%",
-      left: "50%",
-      right: "auto",
-      bottom: "auto",
-      border: "1px solid var(--border-color)",
-      marginRight: "-50%",
-      transform: "translate(-50%, -30%)",
-      padding: "0px",
-      borderRadius: "var(--border-smooth)",
-      backgroundColor: "transparent",
-      minWidth: "300px",
-      maxWidth: "500px",
-    },
-    overlay: {
-      backgroundColor: "rgba(0,0,0,0.5)",
-    },
-  };
+  const getNextId = () =>
+    noteRecords.length === 0
+      ? 1
+      : Math.max(...noteRecords.map((rec) => rec.id)) + 1;
 
+  // Handlers For Modal
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
 
+  // CRUD => {Create, Read, Update, Delete}
   const formSubmit = (noteRecord) => {
     setNoteRecords((prev) => {
       const newLists = [
-        { id: currentID, content: noteRecord, completed: false },
+        { id: getNextId(), content: noteRecord, completed: false },
         ...prev,
       ];
-      localStorage.setItem(STORAGE_KEY_TODOS, JSON.stringify(newLists));
       return newLists;
     });
-    setCurrentID((prev) => prev + 1);
     handleCloseModal();
   };
 
@@ -80,17 +82,13 @@ function App() {
       rec.id === id ? { ...rec, completed: status } : rec
     );
     setNoteRecords(updatedRecords);
-    localStorage.setItem(STORAGE_KEY_TODOS, JSON.stringify(updatedRecords));
   };
 
   const deleteNote = (id) => {
-    setNoteRecords((prev) => {
-      const updatedRecords = prev.filter((rec) => rec.id !== id);
-      localStorage.setItem(STORAGE_KEY_TODOS, JSON.stringify(updatedRecords));
-      return updatedRecords;
-    });
+    setNoteRecords((prev) => prev.filter((rec) => rec.id !== id));
   };
 
+  // Filter and Search Handlers
   const selectFilterHandler = (value) => setFilterValue(value);
 
   const searchHandler = (value) => {
@@ -98,7 +96,7 @@ function App() {
     setSearchFilter(value);
   };
 
-  const filteredNotes = noteRecords.filter((note) => {
+  const filteredNotes = noteRecords?.filter((note) => {
     // Select Box Filter
     const matchesFilter =
       filterValue === "All"
@@ -114,6 +112,7 @@ function App() {
     return matchesFilter && matchesSearch;
   });
 
+  // Edit Modal Handlers
   const handleOpenModal2 = (note) => {
     setStoredId(note.id);
     setEditValue(note.content);
@@ -133,52 +132,64 @@ function App() {
       const updated = prev.map((rec) =>
         rec.id === storedId ? { ...rec, content: newValue } : rec
       );
-      localStorage.setItem(STORAGE_KEY_TODOS, JSON.stringify(updated));
       return updated;
     });
     handleCloseModal2();
   };
 
+  if (!isLoaded) return <div className={styles.loader}></div>;
+
   return (
-    <div className={styles.container}>
-      <h1>Todo List</h1>
-      <Tools
-        selectFilter={selectFilterHandler}
-        searchFilter={searchHandler}
-      ></Tools>
-      <NoteList
-        deleteRecord={deleteNote}
-        noteRecords={filteredNotes}
-        updateFunction={updateCompleted}
-        openEditHandler={handleOpenModal2}
-      ></NoteList>
-      <Modal
-        isOpen={isModalOpen}
-        onRequestClose={handleCloseModal}
-        contentLabel="Modal"
-        style={modalStyles}
-      >
-        <AddForm onCancel={handleCloseModal} formSubmit={formSubmit}></AddForm>
-      </Modal>
+    <ThemeProvider>
+      <div className={styles.container}>
+        <h1>Todo List</h1>
+        {/* Tools Section */}
+        <Tools
+          selectFilter={selectFilterHandler}
+          searchFilter={searchHandler}
+        ></Tools>
 
-      <button className={styles.addBtn} onClick={handleOpenModal}>
-        <FontAwesomeIcon icon={faPlus} />
-      </button>
+        {/* Note List Section */}
+        <NoteList
+          deleteRecord={deleteNote}
+          noteRecords={filteredNotes}
+          updateFunction={updateCompleted}
+          openEditHandler={handleOpenModal2}
+        ></NoteList>
 
-      <Modal
-        isOpen={isModalOpen2}
-        onRequestClose={handleCloseModal2}
-        contentLabel="Modal"
-        style={modalStyles}
-      >
-        <EditForm
-          onCancel={handleCloseModal2}
-          onChange={editChangeHandler}
-          value={editValue}
-          onSave={onSaveEdit}
-        ></EditForm>
-      </Modal>
-    </div>
+        {/* Form Modal Add */}
+        <button className={styles.addBtn} onClick={handleOpenModal}>
+          <FontAwesomeIcon icon={faPlus} />
+        </button>
+
+        <Modal
+          isOpen={isModalOpen}
+          onRequestClose={handleCloseModal}
+          contentLabel="Modal"
+          style={modalStyles}
+        >
+          <AddForm
+            onCancel={handleCloseModal}
+            formSubmit={formSubmit}
+          ></AddForm>
+        </Modal>
+
+        {/* Form Modal Edit */}
+        <Modal
+          isOpen={isModalOpen2}
+          onRequestClose={handleCloseModal2}
+          contentLabel="Modal"
+          style={modalStyles}
+        >
+          <EditForm
+            onCancel={handleCloseModal2}
+            onChange={editChangeHandler}
+            value={editValue}
+            onSave={onSaveEdit}
+          ></EditForm>
+        </Modal>
+      </div>
+    </ThemeProvider>
   );
 }
 

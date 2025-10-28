@@ -53,4 +53,4 @@ function AddForm(props) {
   );
 }
 
-export default AddForm;
+export { AddForm };

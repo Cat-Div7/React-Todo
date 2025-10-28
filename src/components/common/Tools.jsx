@@ -1,32 +1,13 @@
 import styles from "./Tools.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMoon, faSun } from "../../utils/icons";
-import { useState } from "react";
-
-const STORAGE_KEY_THEME = "themeMode";
-const INITIAL_THEME = false;
+import { useContext } from "react";
+import { motion } from "framer-motion";
+import { ThemeContext } from "../../ThemeContext";
 
 function Tools(props) {
   const { selectFilter, searchFilter } = props;
-  const savedTheme =
-    JSON.parse(localStorage.getItem(STORAGE_KEY_THEME)) ?? INITIAL_THEME;
-
-  const [isDark, setIsDark] = useState(savedTheme);
-
-  document.documentElement.setAttribute(
-    "data-theme",
-    isDark ? "dark" : "light"
-  );
-
-  const changeThemeHandler = () => {
-    const newTheme = !isDark;
-    document.documentElement.setAttribute(
-      "data-theme",
-      newTheme ? "dark" : "light"
-    );
-    setIsDark(newTheme);
-    localStorage.setItem(STORAGE_KEY_THEME, JSON.stringify(newTheme));
-  };
+  const { isDark, toggleTheme } = useContext(ThemeContext);
 
   const filterHandler = (e) => {
     selectFilter(e.target.value);
@@ -38,6 +19,7 @@ function Tools(props) {
 
   return (
     <div className={styles["tools-container"]}>
+      {/* Search Filter Input */}
       <div className={styles["search-container"]}>
         <input
           type="search"
@@ -45,16 +27,26 @@ function Tools(props) {
           onChange={searchHandler}
         />
       </div>
+      {/* Select Filter Box */}
       <select onChange={filterHandler}>
         <option>All</option>
         <option>Completed</option>
         <option>Pending</option>
       </select>
-      <button className={styles["theme-toggle"]} onClick={changeThemeHandler}>
-        <FontAwesomeIcon icon={isDark ? faSun : faMoon} />
+      {/* Toggling Theme Btn */}
+      <button className={styles["theme-toggle"]} onClick={toggleTheme}>
+        <motion.span
+          key={isDark ? "sun" : "moon"}
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0, opacity: 0 }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
+        >
+          <FontAwesomeIcon icon={isDark ? faSun : faMoon} />
+        </motion.span>
       </button>
     </div>
   );
 }
 
-export default Tools;
+export { Tools };

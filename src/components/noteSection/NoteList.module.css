@@ -16,17 +16,3 @@
   transition: background-color 0.3s, border-color 0.3s;
 }
 
-.errorContainer {
-  margin: 0 auto;
-  max-width: fit-content;
-  text-align: center;
-
-  .notFound {
-    width: 225px;
-    max-width: 255px;
-    display: block;
-  }
-  p {
-    margin-top: 8px;
-  }
-}
